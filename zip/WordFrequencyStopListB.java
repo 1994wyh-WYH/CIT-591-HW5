@@ -1,17 +1,20 @@
 package TextualAnalysisOfBooks;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Scanner;
 /**
- * A version
- * This class gets the most frequent words in a txt file.
+ * B version 
+ * This class gets the most frequent words in a txt file that are not in the stop list.
  * @author Yihan
  *
  */
-public class WordFrequency {
+public class WordFrequencyStopListB {
+	private ArrayList<String> stopList;
 	private String fileName;
-	private HashMap<String, Integer> frequency;
+	private String stopFileName;
+	private ArrayList<Integer> frequency;
+	private ArrayList<String> words;
 	private long tCreate;
 	private long tAdd;
 	private int cAdd;
@@ -23,10 +26,10 @@ public class WordFrequency {
 	
 	/**
 	 * This is the constructor of the class.
-	 * This method builds a HashMap connecting words and their frequencies of appearance.
-	 * @param fn, file name
+	 * @param fn, file name.
+	 * @param sfn, stop-list file name.
 	 */
-	public WordFrequency(String fn) {
+	public WordFrequencyStopListB(String fn, String sfn) {
 		tCreate=0;
 		tAdd=0;
 		cAdd=0;
@@ -34,16 +37,32 @@ public class WordFrequency {
 		tUpdate=0;
 		tGetTop=0;
 		cCheck=0;
-		cUpdate=0;
 		
 		fileName=fn;
+		stopFileName=sfn;
 		
 		long sCreate=System.nanoTime();
-		frequency=new HashMap<>();
+		frequency=new ArrayList<>();
+		words=new ArrayList<>();
 		long eCreate=System.nanoTime();
-		tCreate=(eCreate-sCreate);
+		tCreate=(eCreate-sCreate)/2;
 		
-		// Set up the HashMap.
+		stopList=new ArrayList<>();
+		// set up the stop list ArrayList.
+		try {
+			File inputFile=new File(stopFileName);
+			Scanner in = new Scanner(inputFile);	
+			while(in.hasNextLine()) {
+				stopList.add(in.nextLine());
+			}
+			in.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		// Set up the Arraylists.
 		try {
 			File inputFile=new File(fileName);
 			Scanner in = new Scanner(inputFile);	
@@ -77,31 +96,40 @@ public class WordFrequency {
 						continue;
 					
 					// Convert capitalized letter to lower-case.
-					current=convert(current);
+					current=WordFrequency.convert(current);
 					// Check empty again.
 					if(current.equals(""))
 						continue;
 					
+					
+					//check if word exists in stop list.
+					//if so, ignore it.
+					if(stopList.contains(current)) {
+						continue;
+					}
 					// Check and update frequency.
 					long sCheck=System.nanoTime();
-					if(frequency.containsKey(current)) {
+					if(words.contains(current)) {
 						long eCheck=System.nanoTime();
 						tCheck+=eCheck-sCheck;
 						cCheck++;
 						
-						int v=frequency.get(current);
+						int i=words.indexOf(current);
+						int v=frequency.get(i);
 						v++;
+						
 						long sUpdate=System.nanoTime();
-						frequency.put(current, v);
+						frequency.set(i, v);
 						long eUpdate=System.nanoTime();
 						tUpdate+=eUpdate-sUpdate;
 						cUpdate++;
 					}
 					else {
 						long sAdd=System.nanoTime();
-						frequency.put(current, 1);
+						words.add(current);
+						frequency.add(1);
 						long eAdd=System.nanoTime();
-						tAdd+=(eAdd-sAdd);
+						tAdd+=(eAdd-sAdd)/2;
 						cAdd++;
 					}
 					
@@ -121,48 +149,29 @@ public class WordFrequency {
 	 */
 	public String[] topFrequentWord() {
 		long sTop=System.nanoTime();
-		HashMap<String, Integer> mTemp=frequency;
+		ArrayList<Integer> aTemp=frequency;
 		String[] cTen=new String[10];
 		int count=0;
 		int max=0;
+		int i=0;
 		while(count<10) {
-			String kk="";
-			for(String k : mTemp.keySet()) {
-				int v=frequency.get(k);
-				if(max<v) {
-					max=v;
-					kk=k;
+			int index=-1;
+			for(int t : aTemp) {
+				index++;
+				if(max<t) {
+					max=t;
+					i=index;
 					}
 				}
-			cTen[count]=kk;
-			mTemp.remove(kk);
+			cTen[count]=words.get(i);
+			aTemp.remove(i);
 			count++;
 			max=0;
+			i=0;
 		}
 		long eTop=System.nanoTime();
 		tGetTop+=eTop-sTop;
 		return cTen;
-	}
-	
-	
-	/**
-	 * This method checks whether there exist upper-case letters in the word and convert them to lower-cases.
-	 * @param s, string to check and update.
-	 * @return an updated string with all lower case letters.
-	 */
-	public static String convert(String s) {
-		StringBuilder sb=new StringBuilder();
-		for(int i=0;i<s.length();i++) {
-
-			if(s.charAt(i)>=65 && s.charAt(i)<=90) {
-				sb.append(Character.toLowerCase(s.charAt(i)));
-			}
-			else {
-				sb.append(s.charAt(i));
-			}
-		}
-		String ret=sb.toString();
-		return ret;
 	}
 	
 	/**
@@ -204,4 +213,7 @@ public class WordFrequency {
 	public long gettGetTop() {
 		return tGetTop;
 	}
+
+
 }
+

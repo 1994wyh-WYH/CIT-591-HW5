@@ -1,0 +1,30 @@
+5 classes are built for printing out time consumption comparison between methods using ArrayList and HashMap.
+
+In terms of nano seconds, the time analysis is shown as follows:
+
+
+
+					HashMap(A) /ns			ArrayList(B) /ns
+
+					Best    Average	  Worst		Best    Average	  Worst
+
+Letter Frequency			47912  	146358	  650980	22650	61105	  171780
+
+Word Frequency				152905  4705391   8365160	17231	1173620	  4646824
+
+word Frequency excluding stop list	106011	3784832	  11537753	13751	1400830	  7839072
+
+Quotes					531320	360754574 11654134958	487812	235249222 11835993567
+
+Wild Card(longest paragraphs)		105541  4089435	  13816960	149069	4473730	  24047560
+
+
+*Notice that two classes for getting quotes and longest paragraphs are not involved with the operations of updating an existing element or checking if an element exists in a structure. Hence the data is not available for these two cases.
+
+*Also, because “tom-sawyer.txt” contains non-UTF_8 signs, the reading of file can be not explicit, therefore causing error in time consumption.
+
+
+Generally, for creating and adding new objects, two structures are equally time consuming. For updating and checking existing elements, HashMap is more efficient. 
+The results are easy to predict because HashMap is well-known for making searching and updating convenient. For creating and adding new object, the time complexity can be similar.
+
+Some odd results can be due to particular styles of the txt file. 
