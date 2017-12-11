@@ -6,7 +6,7 @@ LetterFrequency class gets the top 10 letters in the book.
 WordFrequency class gets the most frequent words in the book.
 WordFrequencyStopList class gets the most frequent words in the book that are not in the stop list.
 TopQuotes class finds the top-10 shortest and longest quotations based on length.
-Wild Card——LongestParagraphs class finds the top-10 shortest and longest quotations based on length.
+LongestParagraphs class finds the top-10 shortest and longest quotations based on length.
 
 A main class (the TexualAnalysis class) was built to print out all the analysis results of the methods. All 9 given books are used to test the methods.
 
